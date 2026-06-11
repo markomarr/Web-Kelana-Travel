@@ -41,7 +41,11 @@ export function LoginForm() {
     setLoading(false);
 
     if (!result || result.error) {
-      setFormError("Email atau password salah");
+      if (result?.code === "rate_limited") {
+        setFormError("Terlalu banyak percobaan login. Coba lagi dalam 15 menit.");
+      } else {
+        setFormError("Email atau password salah");
+      }
       return;
     }
 

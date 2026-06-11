@@ -1,7 +1,12 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { isRateLimited, recordFailedAttempt, clearAttempts } from "@/lib/rate-limit";
+
+class RateLimitError extends CredentialsSignin {
+  code = "rate_limited";
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
@@ -17,11 +22,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!email || !password) return null;
 
+        const rateLimitKey = email.toLowerCase();
+        if (isRateLimited(rateLimitKey)) {
+          throw new RateLimitError();
+        }
+
         const admin = await prisma.adminUser.findUnique({ where: { email } });
-        if (!admin) return null;
+        if (!admin) {
+          recordFailedAttempt(rateLimitKey);
+          return null;
+        }
 
         const isValid = await bcrypt.compare(password, admin.passwordHash);
-        if (!isValid) return null;
+        if (!isValid) {
+          recordFailedAttempt(rateLimitKey);
+          return null;
+        }
+
+        clearAttempts(rateLimitKey);
 
         await prisma.adminUser.update({
           where: { id: admin.id },
