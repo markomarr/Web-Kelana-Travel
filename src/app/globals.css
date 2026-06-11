@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+/* Design tokens — PRD.md Section 7 */
+@theme {
+  --color-primary: #1a3c5e;
+  --color-primary-600: #2e6da4;
+  --color-accent: #e8a020;
+  --color-accent-hover: #d4901a;
+  --color-surface: #f7f8fa;
+  --color-surface-alt: #eef2f7;
+  --color-dark: #0d1b2a;
+  --color-text-primary: #1a1a2e;
+  --color-text-secondary: #4a5568;
+  --color-text-muted: #8896a7;
+}
+
+@theme inline {
+  --font-display: var(--font-plus-jakarta-sans);
+  --font-body: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+body {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+/* Aksesibilitas: focus ring jelas untuk navigasi keyboard */
+:focus-visible {
+  outline: 2px solid var(--color-primary-600);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
