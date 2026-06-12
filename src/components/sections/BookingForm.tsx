@@ -73,9 +73,9 @@ export function BookingForm({ siteName, phoneWhatsapp, routePairs }: BookingForm
 
     const message =
       `Halo ${siteName}, saya ${form.name} ingin pesan travel:\n` +
-      `🛣 Rute: ${form.cityFrom} → ${form.cityTo}\n` +
-      `📅 Tanggal: ${form.date}\n` +
-      `👥 Penumpang: ${form.passengers} orang`;
+      `Rute: ${form.cityFrom} - ${form.cityTo}\n` +
+      `Tanggal: ${form.date}\n` +
+      `Penumpang: ${form.passengers} orang`;
 
     const url = buildWhatsAppUrl(phoneWhatsapp, message);
     window.open(url, "_blank", "noopener,noreferrer");
